@@ -126,14 +126,6 @@ h5 {
   font-size: clamp(0.875rem, 1.5vw, 1.5rem); /* Tiny heading */
 }
 
-.full-page {
-  min-height: 100vh;
-}
-
-.Toastify__toast {
-  text-transform: capitalize;
-}
-
 /* BIGGER FONTS */
 /* h1 {
   font-size: clamp(3rem, 6vw, 6rem);

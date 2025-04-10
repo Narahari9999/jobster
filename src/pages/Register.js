@@ -1,0 +1,90 @@
+import { useState } from 'react';
+import Wrapper from '../assets/wrappers/RegisterAndLoginPage';
+import { Logo, FormRow } from '../components';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser, registerUser } from '../features/user/userSlice';
+
+const url = 'https://jobify-prod.herokuapp.com/api/v1/toolkit/auth/register';
+
+const intitialState = {
+  name: '',
+  email: '',
+  password: '',
+  isMember: true,
+};
+
+const Register = () => {
+  const [values, setValues] = useState(intitialState);
+  const { user, isLoading } = useSelector((store) => store.user);
+
+  const dispatch = useDispatch();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setValues({ ...values, [name]: value });
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const { name, email, password, isMember } = values;
+    if (!email || !password || (!isMember && !name)) {
+      toast.error('Please fill out all fields');
+    }
+
+    if (isMember) {
+      dispatch(loginUser({ email: email, password: password }));
+      return;
+    }
+
+    dispatch(registerUser({ name, email, password }));
+  };
+
+  const toggleMember = () => {
+    setValues({ ...values, isMember: !values.isMember });
+  };
+
+  return (
+    <Wrapper className='full-page'>
+      <form className='form' onSubmit={onSubmit}>
+        <Logo />
+        <h3 style={{ textAlign: 'center' }}>
+          {values.isMember ? 'Login' : 'Register'}
+        </h3>
+        {!values.isMember && (
+          <FormRow
+            name='name'
+            type='text'
+            value={values.name}
+            labelText='name'
+            handleChange={handleChange}
+          />
+        )}
+        <FormRow
+          name='email'
+          type='email'
+          value={values.email}
+          labelText='email'
+          handleChange={handleChange}
+        />
+        <FormRow
+          name='password'
+          type='password'
+          value={values.password}
+          labelText='password'
+          handleChange={handleChange}
+        />
+        <button type='submit' className='btn btn-block' disabled={isLoading}>
+          {isLoading ? 'loading...' : 'submit'}
+        </button>
+        <p>
+          {values.isMember ? 'Not a member yet?' : 'Already a member?'}
+          <button type='button' className='member-btn' onClick={toggleMember}>
+            {values.isMember ? 'Register' : 'Login'}
+          </button>
+        </p>
+      </form>
+    </Wrapper>
+  );
+};
+export default Register;
